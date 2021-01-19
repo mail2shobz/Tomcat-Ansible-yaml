@@ -1,0 +1,41 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+   - name: Update and upgrade apt packages
+     apt: update_cache=yes  force_apt_get=yes cache_valid_time=3600
+  
+
+   - name: install JDK 11
+     apt:
+      name: openjdk-11-jdk
+      state: present
+  
+   
+   - name: download & unarchive
+     unarchive:
+      src: https://downloads.apache.org/tomcat/tomcat-9/v9.0.41/bin/apache-tomcat-9.0.41.tar.gz
+      dest: /opt
+      remote_src: yes
+
+   - name: Change ownership
+     file:
+       path: /opt/apache-tomcat-9.0.41
+       owner: ubuntu
+       group: ubuntu
+       mode: "u+rwx,g+rx,o=rx"
+       recurse: yes
+       state: directory
+
+   - name: Copy Tomcat service from local to remote
+     copy:
+       src: tomcat.service
+       dest: /etc/systemd/system/
+       mode: 0755
+
+   - name: start service 
+     systemd:
+      name: tomcat
+      state: started
+      enabled: yes
+      daemon_reload: yes 
