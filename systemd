@@ -1,0 +1,15 @@
+[Unit]
+Description=Tomcat 8.5 servlet container - Production
+After=network.target
+
+[Service]
+Type=forking
+
+ExecStart=/opt/appservers/production/apache-tomcat-8.5.37/bin/startup.sh
+ExecStop=/opt/appservers/production/apache-tomcat-8.5.37/bin/shutdown.sh
+
+User=tomcat
+Group=tomcat   
+
+[Install]
+WantedBy=multi-user.target
